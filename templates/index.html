@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AmeeraFlower Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body { background: #fff0f7; }
+      .card-shadow { box-shadow: 0 16px 40px rgba(219, 39, 119, 0.14); }
+    </style>
+  </head>
+  <body class="min-h-screen text-slate-900">
+    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <header class="mb-8 rounded-3xl border border-pink-200 bg-white/90 p-6 shadow-lg">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p class="text-sm uppercase tracking-[0.32em] text-pink-600">AmeeraFlower</p>
+            <h1 class="text-3xl font-semibold text-pink-700">ร้านขายดอกไม้ Online</h1>
+            <p class="mt-2 max-w-2xl text-sm text-slate-600">จัดการสินค้าและหมวดหมู่แบบครบวงจร ด้วยอินเทอร์เฟซสีชมพู-ขาวที่สวยงาม</p>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <a href="/" class="rounded-full bg-pink-600 px-5 py-3 text-white transition hover:bg-pink-700">หน้าหลัก</a>
+            <a href="/flowers/add" class="rounded-full border border-pink-300 bg-white px-5 py-3 text-pink-700 transition hover:bg-pink-50">เพิ่มสินค้า</a>
+            <a href="/categories" class="rounded-full border border-pink-300 bg-white px-5 py-3 text-pink-700 transition hover:bg-pink-50">จัดการหมวดหมู่</a>
+          </div>
+        </div>
+      </header>
+
+      {% if view == 'home' %}
+      <section class="grid gap-8 lg:grid-cols-[1.5fr_0.9fr]">
+        <div>
+          <div class="mb-6 flex items-center justify-between gap-4 rounded-3xl bg-white p-6 card-shadow">
+            <div>
+              <h2 class="text-2xl font-semibold text-pink-700">สินค้าแนะนำ</h2>
+              <p class="mt-2 text-sm text-slate-500">ดูสินค้าทั้งหมดพร้อมหมวดหมู่และสต็อก</p>
+            </div>
+            <a href="/flowers/add" class="rounded-full bg-pink-600 px-5 py-3 text-white transition hover:bg-pink-700">เพิ่มสินค้าใหม่</a>
+          </div>
+
+          <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {% for flower in flowers %}
+            <article class="rounded-3xl bg-white overflow-hidden card-shadow transition hover:-translate-y-1">
+              <div class="mb-4 h-40 rounded-3xl rounded-b-none overflow-hidden">
+                {% if flower['image_url'] %}
+                <img src="{{ flower['image_url'] }}" alt="{{ flower['name'] }}" class="w-full h-full object-cover">
+                {% else %}
+                <div class="w-full h-full rounded-3xl bg-gradient-to-br from-pink-100 via-white to-pink-50 p-4 text-center text-pink-700">
+                  <p class="mt-14 text-xl font-semibold">{{ flower['name'] }}</p>
+                </div>
+                {% endif %}
+              </div>
+              <div class="px-5 pb-5 pt-3">
+              <div class="space-y-2">
+                <p class="text-sm text-slate-500">หมวดหมู่: <span class="font-medium text-pink-700">{{ flower['category_name'] }}</span></p>
+                <p class="text-sm text-slate-500">ราคา: <span class="font-semibold text-pink-600">฿{{ '%.2f'|format(flower['price']) }}</span></p>
+                <p class="text-sm text-slate-500">คงเหลือ: <span class="font-medium">{{ flower['stock'] }} ชิ้น</span></p>
+                <p class="text-sm text-slate-500">สี: <span class="font-medium">{{ flower['color'] }}</span></p>
+              </div>
+              <div class="mt-5 flex flex-wrap gap-2">
+                <a href="/flowers/edit/{{ flower['id'] }}" class="rounded-full border border-pink-300 bg-white px-4 py-2 text-sm text-pink-700 transition hover:bg-pink-50">แก้ไข</a>
+                <a href="/flowers/delete/{{ flower['id'] }}" class="rounded-full bg-pink-600 px-4 py-2 text-sm text-white transition hover:bg-pink-700">ลบ</a>
+              </div>
+              </div>
+            </article>
+            {% endfor %}
+          </div>
+        </div>
+
+        <aside class="space-y-6">
+          <div class="rounded-3xl bg-white p-6 card-shadow">
+            <h3 class="text-xl font-semibold text-pink-700">หมวดหมู่ทั้งหมด</h3>
+            <div class="mt-4 space-y-3">
+              {% for category in categories %}
+              <div class="rounded-2xl border border-pink-100 bg-pink-50 p-4">
+                <div class="flex items-center justify-between gap-3">
+                  <div>
+                    <p class="font-semibold text-pink-700">{{ category['name'] }}</p>
+                    <p class="text-sm text-slate-600">{{ category['description'] }}</p>
+                  </div>
+                  <div class="flex gap-2">
+                    <a href="/categories/edit/{{ category['id'] }}" class="rounded-full border border-pink-300 bg-white px-3 py-2 text-xs text-pink-700">แก้ไข</a>
+                    <a href="/categories/delete/{{ category['id'] }}" class="rounded-full bg-pink-600 px-3 py-2 text-xs text-white">ลบ</a>
+                  </div>
+                </div>
+              </div>
+              {% else %}
+              <p class="text-sm text-slate-500">ยังไม่มีหมวดหมู่ กรุณาเพิ่มก่อน</p>
+              {% endfor %}
+            </div>
+            <a href="/categories/add" class="mt-5 inline-flex rounded-full bg-pink-600 px-5 py-3 text-white transition hover:bg-pink-700">เพิ่มหมวดหมู่ใหม่</a>
+          </div>
+        </aside>
+      </section>
+      {% endif %}
+
+      {% if view == 'categories' %}
+      <section class="rounded-3xl bg-white p-6 card-shadow">
+        <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 class="text-2xl font-semibold text-pink-700">จัดการหมวดหมู่</h2>
+            <p class="mt-2 text-sm text-slate-500">เพิ่ม แก้ไข หรือลบหมวดหมู่สินค้าได้ที่นี่</p>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <a href="/categories/add" class="rounded-full bg-pink-600 px-5 py-3 text-white transition hover:bg-pink-700">เพิ่มหมวดหมู่</a>
+            <a href="/" class="rounded-full border border-pink-300 bg-white px-5 py-3 text-pink-700 transition hover:bg-pink-50">กลับหน้าหลัก</a>
+          </div>
+        </div>
+        <div class="grid gap-4">
+          {% for category in categories %}
+          <div class="rounded-3xl border border-pink-100 bg-pink-50 p-5">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p class="text-lg font-semibold text-pink-700">{{ category['name'] }}</p>
+                <p class="text-sm text-slate-600">{{ category['description'] }}</p>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <a href="/categories/edit/{{ category['id'] }}" class="rounded-full border border-pink-300 bg-white px-4 py-2 text-sm text-pink-700">แก้ไข</a>
+                <a href="/categories/delete/{{ category['id'] }}" class="rounded-full bg-pink-600 px-4 py-2 text-sm text-white">ลบ</a>
+              </div>
+            </div>
+          </div>
+          {% else %}
+          <p class="text-sm text-slate-500">ยังไม่มีหมวดหมู่ กรุณาเพิ่มหมวดหมู่ใหม่</p>
+          {% endfor %}
+        </div>
+      </section>
+      {% endif %}
+
+      {% if view == 'flower_form' %}
+      <section class="mx-auto max-w-3xl rounded-3xl bg-white p-8 card-shadow">
+        <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 class="text-2xl font-semibold text-pink-700">{{ title }}</h2>
+            <p class="mt-2 text-sm text-slate-500">กรอกข้อมูลสินค้าตามฟอร์มด้านล่าง</p>
+          </div>
+          <a href="/" class="rounded-full border border-pink-300 bg-white px-5 py-3 text-pink-700 transition hover:bg-pink-50">กลับหน้าหลัก</a>
+        </div>
+        <form action="{{ form_action }}" method="post" class="space-y-5">
+          <div class="grid gap-5 sm:grid-cols-2">
+            <label class="block">
+              <span class="text-sm font-medium text-slate-700">ชื่้อสินค้า</span>
+              <input type="text" name="name" value="{{ flower['name'] if flower else '' }}" required class="mt-2 w-full rounded-3xl border border-pink-200 bg-pink-50 px-4 py-3 text-slate-900 outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100" />
+            </label>
+            <label class="block">
+              <span class="text-sm font-medium text-slate-700">หมวดหมู่</span>
+              <select name="category_id" required class="mt-2 w-full rounded-3xl border border-pink-200 bg-pink-50 px-4 py-3 text-slate-900 outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100">
+                <option value="">เลือกหมวดหมู่</option>
+                {% for category in categories %}
+                <option value="{{ category['id'] }}" {% if flower and flower['category_id'] == category['id'] %}selected{% endif %}>{{ category['name'] }}</option>
+                {% endfor %}
+              </select>
+            </label>
+          </div>
+          <div class="grid gap-5 sm:grid-cols-3">
+            <label class="block">
+              <span class="text-sm font-medium text-slate-700">ราคา (฿)</span>
+              <input type="number" name="price" min="0" step="0.01" value="{{ flower['price'] if flower else '' }}" required class="mt-2 w-full rounded-3xl border border-pink-200 bg-pink-50 px-4 py-3 text-slate-900 outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100" />
+            </label>
+            <label class="block">
+              <span class="text-sm font-medium text-slate-700">สต็อก</span>
+              <input type="number" name="stock" min="0" value="{{ flower['stock'] if flower else '' }}" required class="mt-2 w-full rounded-3xl border border-pink-200 bg-pink-50 px-4 py-3 text-slate-900 outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100" />
+            </label>
+            <label class="block">
+              <span class="text-sm font-medium text-slate-700">สี</span>
+              <input type="text" name="color" value="{{ flower['color'] if flower else '' }}" class="mt-2 w-full rounded-3xl border border-pink-200 bg-pink-50 px-4 py-3 text-slate-900 outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100" />
+            </label>
+          </div>
+          <label class="block">
+            <span class="text-sm font-medium text-slate-700">URL รูปภาพ</span>
+            <input type="url" name="image_url" value="{{ flower['image_url'] if flower else '' }}" placeholder="https://example.com/image.jpg" class="mt-2 w-full rounded-3xl border border-pink-200 bg-pink-50 px-4 py-3 text-slate-900 outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100" />
+          </label>
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <a href="/" class="rounded-full border border-pink-300 bg-white px-5 py-3 text-pink-700 transition hover:bg-pink-50">กลับหน้าหลัก</a>
+            <button type="submit" class="rounded-full bg-pink-600 px-6 py-3 text-white transition hover:bg-pink-700">{{ button_label }}</button>
+          </div>
+        </form>
+      </section>
+      {% endif %}
+
+      {% if view == 'category_form' %}
+      <section class="mx-auto max-w-3xl rounded-3xl bg-white p-8 card-shadow">
+        <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 class="text-2xl font-semibold text-pink-700">{{ title }}</h2>
+            <p class="mt-2 text-sm text-slate-500">จัดการข้อมูลหมวดหมู่สินค้า</p>
+          </div>
+          <a href="/" class="rounded-full border border-pink-300 bg-white px-5 py-3 text-pink-700 transition hover:bg-pink-50">กลับหน้าหลัก</a>
+        </div>
+        <form action="{{ form_action }}" method="post" class="space-y-5">
+          <label class="block">
+            <span class="text-sm font-medium text-slate-700">ชื่อหมวดหมู่</span>
+            <input type="text" name="name" value="{{ category['name'] if category else '' }}" required class="mt-2 w-full rounded-3xl border border-pink-200 bg-pink-50 px-4 py-3 text-slate-900 outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100" />
+          </label>
+          <label class="block">
+            <span class="text-sm font-medium text-slate-700">คำอธิบาย</span>
+            <textarea name="description" rows="4" class="mt-2 w-full rounded-3xl border border-pink-200 bg-pink-50 px-4 py-3 text-slate-900 outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100">{{ category['description'] if category else '' }}</textarea>
+          </label>
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <a href="/" class="rounded-full border border-pink-300 bg-white px-5 py-3 text-pink-700 transition hover:bg-pink-50">กลับหน้าหลัก</a>
+            <button type="submit" class="rounded-full bg-pink-600 px-6 py-3 text-white transition hover:bg-pink-700">{{ button_label }}</button>
+          </div>
+        </form>
+      </section>
+      {% endif %}
+    </div>
+  </body>
+</html>
